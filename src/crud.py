@@ -1,8 +1,9 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import Request
+from sqlalchemy.orm.exc import UnmappedInstanceError
 
 from src import schemas, models
 
@@ -52,6 +53,17 @@ def show_all_cars(request: Request, db: Session, skip: int, limit: int):
     if all_cars:
         return all_cars
     raise HTTPException(detail='not cars for your request', status_code=404)
+
+
+def delete_car(car_id, db: Session):
+    delete_object = db.get(models.CarModel, car_id)
+    try:
+        db.delete(delete_object)
+        db.commit()
+    except UnmappedInstanceError:
+        raise HTTPException(detail='not object in db', status_code=402)
+
+    return {"status": "object successfully deleted"}
 
 
 def test(db: Session, request: Request):

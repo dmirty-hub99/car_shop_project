@@ -35,6 +35,11 @@ def show_all_cars(request: Request, db: Session = Depends(get_db), skip: int = 0
     return crud.show_all_cars(request, db, skip, limit)
 
 
+@app.delete('/delete_car/{car_id}')
+def delete_car(car_id: int, db: Session = Depends(get_db)):
+    return crud.delete_car(car_id, db)
+
+
 @app.get('/test')
 def test(request: Request, db: Session = Depends(get_db)):
     return crud.test(db, request)
