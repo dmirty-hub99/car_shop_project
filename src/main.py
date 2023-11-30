@@ -1,4 +1,4 @@
-from fastapi import Depends, FastAPI
+from fastapi import Depends, FastAPI, Request
 from sqlalchemy.orm import Session
 
 from . import crud, schemas
@@ -36,5 +36,5 @@ def show_all_cars(db: Session = Depends(get_db), skip: int = 0, limit: int = 100
 
 
 @app.get('/test')
-def test(db: Session = Depends(get_db)):
-    return crud.test(db)
+def test(request: Request, db: Session = Depends(get_db)):
+    return crud.test(db, request)

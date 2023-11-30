@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+from fastapi import Request
 
 from src import schemas, models
 
@@ -39,8 +40,10 @@ def add_car(db: Session, car: schemas.CarSchemas):
 
 def show_all_cars(db: Session, skip: int, limit: int):
     all_cars = db.scalars(select(models.CarModel).offset(skip).limit(limit)).all()
-    return all_cars
+    if all_cars:
+        return all_cars
+    raise HTTPException(detail='not cars for your request', status_code=402)
 
 
-def test(db: Session):
+def test(db: Session, request: Request):
     pass
