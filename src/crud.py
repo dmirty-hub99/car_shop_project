@@ -38,11 +38,20 @@ def add_car(db: Session, car: schemas.CarSchemas):
     return car_db
 
 
-def show_all_cars(db: Session, skip: int, limit: int):
-    all_cars = db.scalars(select(models.CarModel).offset(skip).limit(limit)).all()
+def show_all_cars(request: Request, db: Session, skip: int, limit: int):
+    query = select(models.CarModel).offset(skip).limit(limit)
+
+    if request.query_params:
+        for key, value in request.query_params.items():
+            try:
+                query = query.filter(getattr(models.CarModel, key) == value)
+            except AttributeError:
+                pass
+
+    all_cars = db.scalars(query).all()
     if all_cars:
         return all_cars
-    raise HTTPException(detail='not cars for your request', status_code=402)
+    raise HTTPException(detail='not cars for your request', status_code=404)
 
 
 def test(db: Session, request: Request):
