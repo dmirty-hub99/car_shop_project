@@ -37,17 +37,10 @@ def add_car(db: Session, car: schemas.CarSchemas):
     return car_db
 
 
-def show_all_cars(db: Session, skip: int = 0, limit: int = 100):
+def show_all_cars(db: Session, skip: int, limit: int):
     all_cars = db.scalars(select(models.CarModel).offset(skip).limit(limit)).all()
     return all_cars
 
 
 def test(db: Session):
-    # all_cars = db.scalars(select(models.CarModel)).all()
-    #
-    # res = select(models.CarModel).where(models.CarModel.brand_id == 2003)
-    # all_bmw = db.scalars(select(models.CarModel).where(models.CarModel.brand_id == 1)).all()
-    #
-    # return all_cars[0].brand.title
-
-    return 'ok'
+    pass
