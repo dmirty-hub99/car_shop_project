@@ -1,36 +1,31 @@
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from src import schemas, models
 
 
 def add_brand(db: Session, brand: schemas.BrandSchemas):
     brand_db = models.BrandModel(title=brand.title.upper())
-    stmt = select(models.BrandModel).where(models.BrandModel.title == brand_db.title)
-    result_stmt = db.execute(stmt).all()
-
-    if not result_stmt:
+    try:
         db.add(brand_db)
         db.commit()
         db.refresh(brand_db)
         return brand_db
-
-    raise HTTPException(detail='brand already in db', status_code=402)
+    except IntegrityError:
+        raise HTTPException(detail='brand already in db', status_code=402)
 
 
 def add_car_body(db: Session, car_body: schemas.CarBodySchemas):
     car_body_db = models.CarBodyModel(title=car_body.title.lower())
-    stmt = select(models.CarBodyModel).where(models.CarBodyModel.title == car_body_db.title)
-    result_stmt = db.execute(stmt).all()
-
-    if not result_stmt:
+    try:
         db.add(car_body_db)
         db.commit()
         db.refresh(car_body_db)
         return car_body_db
-
-    raise HTTPException(detail='car_body already in db', status_code=402)
+    except IntegrityError:
+        raise HTTPException(detail='car_body already in db', status_code=402)
 
 
 def add_car(db: Session, car: schemas.CarSchemas):
