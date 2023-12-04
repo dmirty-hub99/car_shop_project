@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from . import crud, schemas
 from .database import SessionLocal
+from .dependencies import all_car_parameters
 
 app = FastAPI()
 
@@ -30,7 +31,7 @@ def add_car(car: schemas.CarSchemas, db: Session = Depends(get_db)):
     return crud.add_car(car=car, db=db)
 
 
-@app.get('/show_all_cars', response_model=list[schemas.CarSchemas])
+@app.get('/show_all_cars', response_model=list[schemas.CarSchemas], dependencies=[Depends(all_car_parameters)])
 def show_all_cars(request: Request, db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
     return crud.show_all_cars(request, db, skip, limit)
 
