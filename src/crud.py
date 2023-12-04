@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import select, delete
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import Request
@@ -31,12 +31,20 @@ def add_car_body(db: Session, car_body: schemas.CarBodySchemas):
 
 
 def add_car(db: Session, car: schemas.CarSchemas):
-    car_db = models.CarModel(title=car.title.lower(), brand_id=car.brand_id, year_of_release=car.year_of_release,
-                             car_body_id=car.car_body_id, color=car.color)
-    db.add(car_db)
-    db.commit()
-    db.refresh(car_db)
-    return car_db
+    brand_id = db.scalars(
+        select(models.BrandModel.id).where(models.BrandModel.title == car.brand.title.upper())).first()
+    car_body_id = db.scalars(
+        select(models.CarBodyModel.id).where(models.CarBodyModel.title == car.car_body.title.lower())).first()
+
+    car_db = models.CarModel(title=car.title.lower(), brand_id=brand_id, year_of_release=car.year_of_release,
+                             car_body_id=car_body_id, color=car.color)
+    try:
+        db.add(car_db)
+        db.commit()
+        db.refresh(car_db)
+        return car_db
+    except IntegrityError:
+        raise HTTPException(detail='data error', status_code=402)
 
 
 def show_all_cars(request: Request, db: Session, skip: int, limit: int, car_param: dict):

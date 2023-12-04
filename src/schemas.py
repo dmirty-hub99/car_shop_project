@@ -11,7 +11,7 @@ class CarBodySchemas(BaseModel):
 
 class CarSchemas(BaseModel):
     title: str = Field(max_length=30)
-    brand_id: int
+    brand: BrandSchemas
     year_of_release: int = Field(gt=1999, lt=2025)
-    car_body_id: int
+    car_body: CarBodySchemas
     color: str = Field(max_length=12)
