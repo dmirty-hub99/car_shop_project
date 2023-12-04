@@ -6,3 +6,5 @@ alembic
 pydantic[email]
 passlib
 pydantic_settings
+httpx
+pytest
