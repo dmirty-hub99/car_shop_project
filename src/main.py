@@ -32,8 +32,9 @@ def add_car(car: schemas.CarSchemas, db: Session = Depends(get_db)):
 
 
 @app.get('/show_all_cars', response_model=list[schemas.CarSchemas], dependencies=[Depends(all_car_parameters)])
-def show_all_cars(request: Request, db: Session = Depends(get_db), skip: int = 0, limit: int = 100):
-    return crud.show_all_cars(request, db, skip, limit)
+def show_all_cars(request: Request, db: Session = Depends(get_db), skip: int = 0, limit: int = 100,
+                  car_param: dict = Depends(all_car_parameters)):
+    return crud.show_all_cars(request, db, skip, limit, car_param)
 
 
 @app.delete('/delete_car/{car_id}')

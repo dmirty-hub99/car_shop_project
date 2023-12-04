@@ -39,7 +39,7 @@ def add_car(db: Session, car: schemas.CarSchemas):
     return car_db
 
 
-def show_all_cars(request: Request, db: Session, skip: int, limit: int):
+def show_all_cars(request: Request, db: Session, skip: int, limit: int, car_param: dict):
     query = select(models.CarModel).offset(skip).limit(limit)
 
     if request.query_params:
@@ -49,12 +49,16 @@ def show_all_cars(request: Request, db: Session, skip: int, limit: int):
             except AttributeError:
                 pass
 
-    # if brand:
-    #     query_brand_id = select(models.BrandModel.id).where(models.BrandModel.title == brand.upper())
-    #     brand_id = db.scalars(query_brand_id).first()
-    #     query = query.filter(models.CarModel.brand_id == brand_id)
-    # if car_body:
-    #     query = query.filter(getattr(models.CarModel, 'car_body') == car_body.upper())
+    if car_param['brand_name']:
+        query_brand_id = select(models.BrandModel.id).where(models.BrandModel.title == car_param['brand_name'].upper())
+        brand_id = db.scalars(query_brand_id).first()
+        query = query.filter(models.CarModel.brand_id == brand_id)
+
+    if car_param['car_body_name']:
+        query_car_body_id = select(models.CarBodyModel.id).where(
+            models.CarBodyModel.title == car_param['car_body_name'].lower())
+        car_body_id = db.scalars(query_car_body_id).first()
+        query = query.filter(models.CarModel.car_body_id == car_body_id)
 
     all_cars = db.scalars(query).all()
     if all_cars:
@@ -74,12 +78,4 @@ def delete_car(car_id, db: Session):
 
 
 def test(db: Session, request: Request):
-    brand = 'audi'
-
-    query_brand_name = select(models.BrandModel.id).where(models.BrandModel.title == brand.upper())
-    brand_name = db.scalars(query_brand_name).first()
-
-    query = select(models.CarModel).where(models.CarModel.brand_id == brand_name)
-    all_cars = db.scalars(query).all()
-
-    return all_cars
+    pass
