@@ -85,5 +85,5 @@ def delete_car(car_id, db: Session):
     return {"status": "object successfully deleted"}
 
 
-def test(db: Session, request: Request):
+def app_test(db: Session, request: Request):
     pass

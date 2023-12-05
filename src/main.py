@@ -43,5 +43,5 @@ def delete_car(car_id: int, db: Session = Depends(get_db)):
 
 
 @app.get('/test')
-def test(request: Request, db: Session = Depends(get_db)):
-    return crud.test(db, request)
+def app_test(request: Request, db: Session = Depends(get_db)):
+    return crud.app_test(db, request)
