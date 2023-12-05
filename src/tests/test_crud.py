@@ -1,9 +1,5 @@
 from fastapi.testclient import TestClient
-from sqlalchemy import select
-from sqlalchemy.orm import Session
 
-from src import models
-from src.database import engine
 from src.main import app
 from src.tests.json_requests import add_car_json
 
