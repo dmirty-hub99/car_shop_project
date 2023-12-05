@@ -10,21 +10,21 @@ from src.tests.json_requests import add_car_json
 client = TestClient(app)
 
 
-def test_add_brand():
+def test_add_brand(delete_test_brand):
     response = client.post('/add_brand', json={
         "title": "test_brand"})
     assert response.status_code == 200
     assert response.json() == {"title": 'TEST_BRAND'}
 
 
-def test_add_car_body():
+def test_add_car_body(delete_test_car_body):
     response = client.post('/add_car_body', json={
         "title": "test_car_body"})
     assert response.status_code == 200
     assert response.json() == {"title": 'test_car_body'}
 
 
-def test_add_car():
+def test_add_car(delete_all_test_cars):
     response = client.post('/add_car', json=add_car_json)
     assert response.status_code == 200
     assert response.json()['title'] == 'test_car'
@@ -32,26 +32,3 @@ def test_add_car():
     assert response.json()['color'] == 'blue'
     assert response.json()['brand']['title'] == 'AUDI'
     assert response.json()['car_body']['title'] == 'sedan'
-
-
-def test_default_end():
-    with Session(engine) as db:
-        test_brand = db.scalars(select(models.BrandModel).where(models.BrandModel.title == 'TEST_BRAND')).first()
-        test_car_body = db.scalars(
-            select(models.CarBodyModel).where(models.CarBodyModel.title == 'test_car_body')).first()
-        test_cars = db.scalars(select(models.CarModel).where(models.CarModel.title == 'test_car')).all()
-        try:
-            db.delete(test_brand)
-        except:
-            pass
-        try:
-            db.delete(test_car_body)
-        except:
-            pass
-        for car in test_cars:
-            try:
-                db.delete(car)
-            except:
-                pass
-
-        db.commit()
