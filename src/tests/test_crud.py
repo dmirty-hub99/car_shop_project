@@ -28,3 +28,14 @@ def test_add_car(delete_all_test_cars):
     assert response.json()['color'] == 'blue'
     assert response.json()['brand']['title'] == 'AUDI'
     assert response.json()['car_body']['title'] == 'sedan'
+
+
+def test_delete_car(create_car_for_delete):
+    delete_car_id = create_car_for_delete
+    response = client.delete(f'/delete_car/{delete_car_id}')
+    assert response.json() == {"status": "object successfully deleted"}
+
+
+def test_delete_error_car_id():
+    response = client.delete(f'/delete_car/1000000')
+    assert response.json() == {"detail": "not object in db"}
