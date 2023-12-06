@@ -20,7 +20,7 @@ def test_add_car_body(delete_test_car_body):
     assert response.json() == {"title": 'test_car_body'}
 
 
-def test_add_car(delete_all_test_cars):
+def test_add_car(delete_test_car):
     response = client.post('/add_car', json=add_car_json)
     assert response.status_code == 200
     assert response.json()['title'] == 'test_car'
