@@ -33,8 +33,12 @@ def add_car_body(db: Session, car_body: schemas.CarBodySchemas):
 def add_car(db: Session, car: schemas.CarSchemas):
     brand_id = db.scalars(
         select(models.BrandModel.id).where(models.BrandModel.title == car.brand.title.upper())).first()
+    if not brand_id:
+        raise HTTPException(detail='brand error', status_code=402)
     car_body_id = db.scalars(
         select(models.CarBodyModel.id).where(models.CarBodyModel.title == car.car_body.title.lower())).first()
+    if not car_body_id:
+        raise HTTPException(detail='car body error', status_code=402)
 
     car_db = models.CarModel(title=car.title.lower(), brand_id=brand_id, year_of_release=car.year_of_release,
                              car_body_id=car_body_id, color=car.color)
